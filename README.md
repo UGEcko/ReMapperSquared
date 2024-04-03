@@ -1,2 +1,2 @@
-# ReMapperSquared
-Personal scripts that are made using the great ReMapper!
+# ReMapper²
+Personal scripts that are made using the great ReMapper
