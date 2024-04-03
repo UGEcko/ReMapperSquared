@@ -12,4 +12,4 @@ import { wallGrid } from 'https://raw.githubusercontent.com/UGEcko/ReMapperSquar
 
 | Feature Name  | Description |
 | ------------- | ------------- |
-| wallGrid  | Create a grid out of walls |
+| wallGrid  | [Create a grid out of walls](https://github.com/UGEcko/ReMapperSquared/wiki#WallGrid) |
