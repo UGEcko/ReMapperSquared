@@ -115,3 +115,5 @@ export class bookmarkText {
         lyricsScene.animate(switches);
    }
 }
+
+t
