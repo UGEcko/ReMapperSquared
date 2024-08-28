@@ -80,29 +80,39 @@ export function getBookmarks(returnType: returnBookmark): bookmarkObject[] {
  * @param keyword | A keyword (in the beginning of the bookmark name) that can be used to filter between other bookmarks. Ex: "LYRIC_"
  * @param material | The material of the text; Works the same way when you are declaring geometry.
  * @param screenTime | The screenTime lyrics will be visible, unless there is another bookmark before this time offset.
- * @param range | Range for finding bookmarks. For example, only finding bookmarks between beat 10 and 100: ```.range = [10,100]```
  */
 export class bookmarkText {
 	textObject?: (text: Text) => void;
 	material?: GeometryMaterial;
-	screenTime: number = 10;
+	screenTime?: number = 10;
 	private range?: Vec2;
 
 	constructor(public font: string, public keyword?: string) {}
-
+    /**
+	* Push the text objects to the difficulty.
+	* @param range | The beat range of the bookmarks youd like to add to text in beats. Ex: Bookmarks between beat 0-50: ```.push([0,50]);```
+ 	*/
 	push(range?: Vec2) {
 		this.range = range;
 
 		const bookmarks = getBookmarks("both");
 		const lyrics: bookmarkObject[] = [];
-		if (this.keyword) {
-			bookmarks.forEach(x => {
-				if (x.n?.includes(this.keyword as string)) {
-					x.n.slice(this.keyword?.length);
-					lyrics.push(x) as bookmarkObject;
-				}
-			});
-		}
+        if(bookmarks.length > 0) {
+            if (this.keyword) {
+                bookmarks.forEach(x => {
+                    if (x.n?.includes(this.keyword as string)) {
+                        x.n.slice(this.keyword?.length);
+                        lyrics.push(x) as bookmarkObject;
+                    }
+                });
+            } else {
+                bookmarks.forEach(x=> {
+                    lyrics.push(x) as bookmarkObject;
+                })
+            }
+        }
+		
+
 		const text = new Text(this.font);
 		if (this.textObject) {
 			this.textObject(text);
@@ -116,13 +126,15 @@ export class bookmarkText {
 			if (name && beat) {
 				if (this.range) if (beat < this.range[0] || beat > this.range[1]) return;
 				switches.push([text.toObjects(name), beat]);
-				if (!lyrics[i + 1]) {
-					switches.push([[], beat + this.screenTime]); // Automatically switch to a blank scene if there isnt another textmark after 10 beats
-				}
+                if(this.screenTime) {
+                    if (!lyrics[i + 1] || lyrics[i+1].b > beat + this.screenTime) {
+                        switches.push([[], beat + this.screenTime]); // Automatically switch to a blank scene if there isnt another textmark, or if the next one isnt called at beat x.
+                    }
+                }
 			}
 		}
 
-		const lyricsScene = new ModelScene(new Geometry("Cube", this.material));
+		const lyricsScene = new ModelScene(new Geometry("Cube", this.material ? this.material : undefined));
 		lyricsScene.animate(switches);
 	}
 }
