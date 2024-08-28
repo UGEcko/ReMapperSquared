@@ -83,17 +83,12 @@ export function getBookmarks(returnType: returnBookmark): bookmarkObject[] {
  * @param range | Range for finding bookmarks. For example, only finding bookmarks between beat 10 and 100: ```.range = [10,100]```
  */
 export class bookmarkText {
-	font?: string;
 	textObject?: (text: Text) => void;
-	keyword?: string;
 	material?: GeometryMaterial;
 	screenTime: number = 10;
 	private range?: Vec2;
 
-	constructor(font: string, keyword?: string) {
-		this.font = font;
-		this.keyword = keyword;
-	}
+	constructor(public font: string, public keyword?: string) {}
 
 	push(range?: Vec2) {
 		this.range = range;
@@ -108,9 +103,9 @@ export class bookmarkText {
 				}
 			});
 		}
-		let text = new Text(this.font as string);
+		const text = new Text(this.font);
 		if (this.textObject) {
-			text = this.textObject as unknown as Text;
+			this.textObject(text);
 		}
 
 		const switches: [AnimatedObjectInput, number][] = [[[], 0]];
